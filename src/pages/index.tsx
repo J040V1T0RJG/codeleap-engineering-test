@@ -1,7 +1,12 @@
+import Image from 'next/image'
+
+import logoImage from '@/assets/logo.svg'
+import { HomeContainer } from '@/styles/pages/home'
+
 export default function Home() {
   return (
-    <>
-      <p>hello word</p>
-    </>
+    <HomeContainer>
+      <Image src={logoImage} alt={''} />
+    </HomeContainer>
   )
 }
