@@ -17,6 +17,8 @@ export const {
 
       blue500: '#7695EC',
 
+      gray100: '#DDDDDD',
+      gray300: '#CCCCCC',
       gray500: '#777777',
 
       red500: '#FF5151',
