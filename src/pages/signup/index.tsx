@@ -11,7 +11,6 @@ import {
 import { Button } from '@/components/Button'
 import Head from 'next/head'
 import { GetStaticProps } from 'next'
-import { link } from 'fs/promises'
 
 const signUpDataSchema = z.object({
   username: z
