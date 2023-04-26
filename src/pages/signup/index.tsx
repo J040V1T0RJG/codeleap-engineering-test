@@ -1,3 +1,5 @@
+import Head from 'next/head'
+import { GetStaticProps } from 'next'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -9,13 +11,11 @@ import {
   SignUpContainer,
 } from '@/styles/pages/signup'
 import { Button } from '@/components/Button'
-import Head from 'next/head'
-import { GetStaticProps } from 'next'
 
 const signUpDataSchema = z.object({
   username: z
     .string()
-    .nonempty({ message: 'O nome é obrigatório' })
+    .nonempty({ message: 'Username is required' })
     .transform((name) => {
       return name.trim()
     }),
@@ -48,7 +48,7 @@ export default function SignUp() {
           <h2>Welcome to CodeLeap network!</h2>
           <Form onSubmit={handleSubmit(handleRegisterUserName)}>
             <InputWrapper>
-              <label htmlFor="userName">Please enter your username</label>
+              <label htmlFor="username">Please enter your username</label>
               <input
                 type="text"
                 {...register('username')}

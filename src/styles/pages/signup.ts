@@ -49,7 +49,7 @@ export const InputWrapper = styled('div', {
 
   input: {
     background: '&white',
-    border: '1px solid #777777',
+    border: '1px solid $gray700',
     borderRadius: '8px',
     padding: '0.5rem',
   },

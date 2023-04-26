@@ -29,13 +29,13 @@ export const Button = styled('button', {
         color: '$white',
 
         '&:disabled': {
-          backgroundColor: '$gray500',
-          border: '1px solid $gray500',
+          backgroundColor: '$gray700',
+          border: '1px solid $gray700',
         },
       },
       cancel: {
         backgroundColor: 'transparent',
-        border: '1px solid $gray500',
+        border: '1px solid $gray700',
       },
       delete: {
         backgroundColor: '$red500',
