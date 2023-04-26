@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { NotePencil, Trash } from 'phosphor-react'
 import { formatDistanceToNow } from 'date-fns'
+import { useRouter } from 'next/router'
 
 import {
   Form,
@@ -17,6 +18,10 @@ import {
   PostWrapper,
 } from '@/styles/pages/main'
 import { Button } from '@/components/Button'
+import { GetServerSideProps } from 'next'
+import { api } from '@/libs/axios'
+import { useContext, useEffect } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
 
 const postDataSchema = z.object({
   title: z.string().nonempty({ message: 'Title is required' }),
@@ -25,13 +30,34 @@ const postDataSchema = z.object({
 
 type postDataType = z.infer<typeof postDataSchema>
 
-export default function Main() {
+interface MainProps {
+  posts: {
+    count: number
+    next: any
+    previous: any
+    results: {
+      id: number
+      username: string
+      created_datetime: string
+      title: string
+      content: string
+    }[]
+  }
+}
+
+export default function Main({ posts }: MainProps) {
+  const { isFallback, push } = useRouter()
+  const { usernameData } = useContext(AuthContext)
   const { register, watch, handleSubmit } = useForm<postDataType>({
     resolver: zodResolver(postDataSchema),
   })
 
-  function handleCreatePost({ title, content }: postDataType) {
-    console.log('{ title, content } =>', { title, content })
+  async function handleCreatePost({ title, content }: postDataType) {
+    try {
+      await api.post('/', { title, content, username: usernameData?.username })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const isButtonDisabled: boolean = !!(
@@ -40,6 +66,26 @@ export default function Main() {
     watch('content')?.length === 0 ||
     !watch('content')
   )
+
+  function Redirect() {
+    useEffect(() => {
+      push('/signup')
+    }, [])
+
+    return <></>
+  }
+
+  if (!usernameData) {
+    return <Redirect />
+  }
+
+  if (isFallback) {
+    return (
+      <>
+        <p>carregando...</p>
+      </>
+    )
+  }
 
   return (
     <>
@@ -79,40 +125,42 @@ export default function Main() {
             </Form>
           </FormWrapper>
 
-          <PostWrapper>
-            <PostTitle>
-              <h3>My First Post at CodeLeap Network!</h3>
-              <span className="postButtonBox">
-                <Trash size={22} weight="bold" />
-                <NotePencil size={22} weight="bold" />
-              </span>
-            </PostTitle>
-            <PostContent>
-              <span>
-                <strong>@Victor</strong>
-                <p>
-                  {formatDistanceToNow(
-                    new Date('2023-04-26T14:27:00.236480Z'),
-                    {
-                      addSuffix: true,
-                    },
+          {posts.results.map((post) => {
+            return (
+              <PostWrapper key={post.id}>
+                <PostTitle>
+                  <h3>{post.title}</h3>
+                  {usernameData?.username === post.username && (
+                    <span className="postButtonBox">
+                      <Trash size={22} weight="bold" />
+                      <NotePencil size={22} weight="bold" />
+                    </span>
                   )}
-                </p>
-              </span>
-              <p>
-                Curabitur suscipit suscipit tellus. Phasellus consectetuer
-                vestibulum elit. Pellentesque habitant morbi tristique senectus
-                et netus et malesuada fames ac turpis egestas. Maecenas egestas
-                arcu quis ligula mattis placerat. Duis vel nibh at velit
-                scelerisque suscipit. Duis lobortis massa imperdiet quam. Aenean
-                posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu
-                sollicitudin urna dolor sagittis lacus. Fusce a quam. Nullam vel
-                sem. Nullam cursus lacinia erat.
-              </p>
-            </PostContent>
-          </PostWrapper>
+                </PostTitle>
+                <PostContent>
+                  <span>
+                    <strong>{post.username}</strong>
+                    <p>
+                      {formatDistanceToNow(new Date(post.created_datetime), {
+                        addSuffix: true,
+                      })}
+                    </p>
+                  </span>
+                  <p>{post.content}</p>
+                </PostContent>
+              </PostWrapper>
+            )
+          })}
         </MainBox>
       </MainContainer>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data }: { data: MainProps } = await api.get('/')
+
+  return {
+    props: { posts: data },
+  }
 }
