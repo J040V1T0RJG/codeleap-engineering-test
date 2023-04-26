@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/Button'
 import Head from 'next/head'
 import { GetStaticProps } from 'next'
+import { link } from 'fs/promises'
 
 const signUpDataSchema = z.object({
   username: z
@@ -29,7 +30,8 @@ export default function SignUp() {
   })
 
   function handleRegisterUserName({ username }: signUpDataType) {
-    console.log('username =>', username)
+    const stateJSON = JSON.stringify({ username })
+    localStorage.setItem('@codeleap-engineering-test:auth-1.0.0', stateJSON)
   }
 
   const isButtonDisabled: boolean = !!(
