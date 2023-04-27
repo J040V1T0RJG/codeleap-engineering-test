@@ -1,22 +1,15 @@
-import { styled } from '@/styles'
-
-export const SignUpContainer = styled('main', {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '100vh',
-  background: '$gray100',
-})
+import { styled } from '..'
 
 export const FormWrapper = styled('div', {
-  maxWidth: '31.25rem',
-  width: '100%',
-  padding: '1.5rem',
+  display: 'flex',
+  flexDirection: 'column',
 
   background: '$white',
   border: '1px solid $gray300',
   borderRadius: '1rem',
+  padding: '1.5rem',
+  marginTop: '1.5rem',
+  gap: '1.5rem',
 
   h2: {
     fontWeight: 700,
@@ -28,10 +21,7 @@ export const FormWrapper = styled('div', {
 export const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between',
-
-  marginTop: '1.5rem',
-  gap: '2rem',
+  gap: '1.5rem',
 
   '> :last-child': {
     marginLeft: 'auto',
@@ -49,6 +39,14 @@ export const InputWrapper = styled('div', {
   },
 
   input: {
+    background: '&white',
+    border: '1px solid $gray700',
+    borderRadius: '8px',
+    padding: '0.5rem',
+  },
+
+  textarea: {
+    minHeight: '4.625rem',
     background: '&white',
     border: '1px solid $gray700',
     borderRadius: '8px',

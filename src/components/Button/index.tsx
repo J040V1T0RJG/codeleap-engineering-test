@@ -29,18 +29,33 @@ export const Button = styled('button', {
         color: '$white',
 
         '&:disabled': {
-          backgroundColor: '$gray500',
-          border: '1px solid $gray500',
+          backgroundColor: '$gray700',
+          border: '1px solid $gray700',
         },
       },
       cancel: {
         backgroundColor: 'transparent',
-        border: '1px solid $gray500',
+        border: '1px solid $gray700',
       },
       delete: {
         backgroundColor: '$red500',
         border: '1px solid $red500',
         color: '$white',
+
+        '&:disabled': {
+          backgroundColor: '$gray700',
+          border: '1px solid $gray700',
+        },
+      },
+      save: {
+        backgroundColor: '$green500',
+        border: '1px solid $green500',
+        color: '$white',
+
+        '&:disabled': {
+          backgroundColor: '$gray700',
+          border: '1px solid $gray700',
+        },
       },
     },
   },
