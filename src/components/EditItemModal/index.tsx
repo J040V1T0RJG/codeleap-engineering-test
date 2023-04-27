@@ -25,7 +25,12 @@ const postDataSchema = z.object({
 
 type postDataType = z.infer<typeof postDataSchema>
 
-export function EditItemModal({ postId }: { postId: number }) {
+interface EditItemMotalProps {
+  postId: number
+  refreshPosts: () => void
+}
+
+export function EditItemModal({ postId, refreshPosts }: EditItemMotalProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const { register, watch, handleSubmit, reset } = useForm<postDataType>({
     resolver: zodResolver(postDataSchema),
@@ -35,6 +40,7 @@ export function EditItemModal({ postId }: { postId: number }) {
     try {
       setLoading(true)
       await api.patch(`/${postId}/`, { title, content })
+      refreshPosts()
     } catch (error) {
       console.error(error)
     } finally {

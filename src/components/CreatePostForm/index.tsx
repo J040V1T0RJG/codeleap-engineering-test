@@ -21,9 +21,13 @@ type postDataType = z.infer<typeof postDataSchema>
 
 interface CreatePostFormProps {
   accountOwnerName: { username: string } | null
+  refreshPosts: () => void
 }
 
-export function CreatePostForm({ accountOwnerName }: CreatePostFormProps) {
+export function CreatePostForm({
+  accountOwnerName,
+  refreshPosts,
+}: CreatePostFormProps) {
   const { register, watch, handleSubmit, reset } = useForm<postDataType>({
     resolver: zodResolver(postDataSchema),
   })
@@ -37,6 +41,7 @@ export function CreatePostForm({ accountOwnerName }: CreatePostFormProps) {
         content,
         username: accountOwnerName?.username,
       })
+      refreshPosts()
     } catch (error) {
       console.error(error)
     } finally {

@@ -13,6 +13,7 @@ interface PostProps {
   title: string
   content: string
   accountOwnerName: { username: string } | null
+  refreshPosts: () => void
 }
 
 export function Post({
@@ -23,6 +24,7 @@ export function Post({
   title,
   content,
   accountOwnerName,
+  refreshPosts,
 }: PostProps) {
   return (
     <PostWrapper>
@@ -34,14 +36,14 @@ export function Post({
               <Dialog.Trigger asChild>
                 <Trash size={22} weight="bold" />
               </Dialog.Trigger>
-              <DeleteAlert postId={id} />
+              <DeleteAlert postId={id} refreshPosts={refreshPosts} />
             </Dialog.Root>
 
             <Dialog.Root>
               <Dialog.Trigger asChild>
                 <NotePencil size={22} weight="bold" />
               </Dialog.Trigger>
-              <EditItemModal postId={id} />
+              <EditItemModal postId={id} refreshPosts={refreshPosts} />
             </Dialog.Root>
           </span>
         )}

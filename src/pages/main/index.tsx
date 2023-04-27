@@ -7,12 +7,18 @@ import { useContext } from 'react'
 import { GetServerSideProps } from 'next'
 import useSWR from 'swr'
 
-import { Header, MainBox, MainContainer } from '@/styles/pages/main'
+import {
+  ErrorMessage,
+  Header,
+  MainBox,
+  MainContainer,
+} from '@/styles/pages/main'
 import { api } from '@/libs/axios'
 import { AuthContext } from '@/contexts/AuthContext'
 import { AxiosResponse } from 'axios'
 import { Post } from '@/components/Post'
 import { CreatePostForm } from '@/components/CreatePostForm'
+import { PostSkeleton } from '@/components/Post/PostSkeleton'
 
 interface MainProps {
   count: number
@@ -32,11 +38,14 @@ export default function Main() {
   const { usernameData, logout } = useContext(AuthContext)
   const {
     data: postsData,
-    // eslint-disable-next-line no-unused-vars
     error,
     isLoading,
-  } = useSWR('/', (url) =>
-    api.get(url).then((response: AxiosResponse<MainProps>) => response.data),
+    mutate,
+  } = useSWR(
+    '/',
+    (url) =>
+      api.get(url).then((response: AxiosResponse<MainProps>) => response.data),
+    { refreshInterval: 60 * 1000 },
   )
 
   if (typeof window !== 'undefined') {
@@ -46,10 +55,6 @@ export default function Main() {
     if (!isThereUser) {
       push('/signup')
     }
-  }
-
-  if (isLoading) {
-    console.log('carregando')
   }
 
   return (
@@ -71,13 +76,31 @@ export default function Main() {
           />
         </Header>
         <MainBox>
-          <CreatePostForm accountOwnerName={usernameData} />
+          <CreatePostForm
+            accountOwnerName={usernameData}
+            refreshPosts={mutate}
+          />
 
-          {postsData?.results.map((post) => {
-            return (
-              <Post key={post.id} accountOwnerName={usernameData} {...post} />
-            )
-          })}
+          {error ? (
+            <ErrorMessage>
+              <p>An error occurred while fetching the posts.</p>
+            </ErrorMessage>
+          ) : isLoading ? (
+            [1, 2, 3].map((element) => {
+              return <PostSkeleton key={element} />
+            })
+          ) : (
+            postsData?.results.map((post) => {
+              return (
+                <Post
+                  key={post.id}
+                  accountOwnerName={usernameData}
+                  {...post}
+                  refreshPosts={mutate}
+                />
+              )
+            })
+          )}
         </MainBox>
       </MainContainer>
     </>

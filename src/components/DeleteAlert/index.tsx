@@ -13,13 +13,19 @@ import {
   Title,
 } from '@/styles/components/deleteAlert'
 
-export function DeleteAlert({ postId }: { postId: number }) {
+interface DeleteAlertProps {
+  postId: number
+  refreshPosts: () => void
+}
+
+export function DeleteAlert({ postId, refreshPosts }: DeleteAlertProps) {
   const [loading, setLoading] = useState<boolean>(false)
 
   async function handleDeletePost() {
     try {
       setLoading(true)
       await api.delete(`/${postId}/`)
+      refreshPosts()
     } catch (error) {
       console.error(error)
     } finally {
