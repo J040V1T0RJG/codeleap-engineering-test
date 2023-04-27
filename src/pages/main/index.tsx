@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { NotePencil, Trash } from 'phosphor-react'
 import { formatDistanceToNow } from 'date-fns'
-import { useRouter } from 'next/router'
+import * as Dialog from '@radix-ui/react-dialog'
 
 import {
   Form,
@@ -20,8 +20,10 @@ import {
 import { Button } from '@/components/Button'
 import { GetServerSideProps } from 'next'
 import { api } from '@/libs/axios'
-import { useContext, useEffect } from 'react'
+import { useContext, useState } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
+import { BeatLoader } from 'react-spinners'
+import { EditItemModal } from '@/components/EditItemModal'
 
 const postDataSchema = z.object({
   title: z.string().nonempty({ message: 'Title is required' }),
@@ -46,17 +48,22 @@ interface MainProps {
 }
 
 export default function Main({ posts }: MainProps) {
-  const { isFallback, push } = useRouter()
+  // const { isFallback, push } = useRouter()
   const { usernameData } = useContext(AuthContext)
-  const { register, watch, handleSubmit } = useForm<postDataType>({
+  const [loading, setLoading] = useState<boolean>(false)
+  const { register, watch, handleSubmit, reset } = useForm<postDataType>({
     resolver: zodResolver(postDataSchema),
   })
 
   async function handleCreatePost({ title, content }: postDataType) {
     try {
+      setLoading(true)
       await api.post('/', { title, content, username: usernameData?.username })
     } catch (error) {
       console.error(error)
+    } finally {
+      reset()
+      setLoading(false)
     }
   }
 
@@ -67,25 +74,27 @@ export default function Main({ posts }: MainProps) {
     !watch('content')
   )
 
-  function Redirect() {
-    useEffect(() => {
-      push('/signup')
-    }, [])
+  // function Redirect() {
+  //   useEffect(() => {
+  //     push('/signup')
+  //   }, [])
 
-    return <></>
-  }
+  //   return <></>
+  // }
 
-  if (!usernameData) {
-    return <Redirect />
-  }
+  // console.log('isFallback ==>', isFallback)
+  // if (isFallback) {
+  //   return (
+  //     <>
+  //       <p>carregando...</p>
+  //     </>
+  //   )
+  // }
 
-  if (isFallback) {
-    return (
-      <>
-        <p>carregando...</p>
-      </>
-    )
-  }
+  // console.log('!usernameData ==>', !usernameData)
+  // if (!usernameData) {
+  //   return <Redirect />
+  // }
 
   return (
     <>
@@ -118,9 +127,9 @@ export default function Main({ posts }: MainProps) {
               <Button
                 type="submit"
                 variant="primary"
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || loading}
               >
-                Create
+                {loading ? <BeatLoader color="#fff" /> : 'Create'}
               </Button>
             </Form>
           </FormWrapper>
@@ -133,7 +142,13 @@ export default function Main({ posts }: MainProps) {
                   {usernameData?.username === post.username && (
                     <span className="postButtonBox">
                       <Trash size={22} weight="bold" />
-                      <NotePencil size={22} weight="bold" />
+
+                      <Dialog.Root>
+                        <Dialog.Trigger asChild>
+                          <NotePencil size={22} weight="bold" />
+                        </Dialog.Trigger>
+                        <EditItemModal postId={post.id} />
+                      </Dialog.Root>
                     </span>
                   )}
                 </PostTitle>

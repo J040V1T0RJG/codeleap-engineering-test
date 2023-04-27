@@ -41,6 +41,21 @@ export const Button = styled('button', {
         backgroundColor: '$red500',
         border: '1px solid $red500',
         color: '$white',
+
+        '&:disabled': {
+          backgroundColor: '$gray700',
+          border: '1px solid $gray700',
+        },
+      },
+      save: {
+        backgroundColor: '$green500',
+        border: '1px solid $green500',
+        color: '$white',
+
+        '&:disabled': {
+          backgroundColor: '$gray700',
+          border: '1px solid $gray700',
+        },
       },
     },
   },
