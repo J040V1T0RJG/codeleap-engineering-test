@@ -20,12 +20,17 @@ export const Header = styled('header', {
   fontSize: '1.375rem',
   lineHeight: '26px',
   color: '$white',
+
+  '@media (max-width: 50rem)': {
+    width: '100%',
+  },
 })
 
 export const MainBox = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  width: '50rem',
+  maxWidth: '50rem',
+  width: '100%',
   minHeight: '100vh',
 
   backgroundColor: 'White',
@@ -98,7 +103,7 @@ export const PostTitle = styled('div', {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  height: '4.375rem',
+  minHeight: '4.375rem',
 
   background: '$blue500',
   color: '$white',

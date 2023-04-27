@@ -10,12 +10,17 @@ export const SignUpContainer = styled('main', {
 })
 
 export const FormWrapper = styled('div', {
-  width: '31.25rem',
+  maxWidth: '31.25rem',
+  width: '100%',
   padding: '1.5rem',
 
   background: '$white',
   border: '1px solid $gray300',
   borderRadius: '1rem',
+
+  // '@media (max-width: 31.25rem)': {
+  //   width: '100%',
+  // },
 
   h2: {
     fontWeight: 700,

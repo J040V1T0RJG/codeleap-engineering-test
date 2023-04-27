@@ -35,6 +35,10 @@ export const DeleteAlertWrapper = styled('div', {
   padding: '1.5rem',
   marginTop: '1.5rem',
   gap: '3rem',
+
+  '@media (max-width: 50rem)': {
+    width: '100%',
+  },
 })
 
 export const ButtonWrapper = styled('div', {

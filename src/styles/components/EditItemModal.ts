@@ -42,6 +42,10 @@ export const FormWrapper = styled('div', {
   borderRadius: '1rem',
   padding: '1.5rem',
   gap: '1.5rem',
+
+  '@media (max-width: 50rem)': {
+    width: '100%',
+  },
 })
 
 export const Form = styled('form', {
