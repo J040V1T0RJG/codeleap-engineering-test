@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { BeatLoader } from 'react-spinners'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { api } from '@/libs/axios'
 import { Button } from '../Button'
@@ -12,20 +12,21 @@ import {
   Overlay,
   Title,
 } from '@/styles/components/deleteAlert'
+import { PostsContext } from '@/contexts/PostContext'
 
 interface DeleteAlertProps {
   postId: number
-  refreshPosts: () => void
 }
 
-export function DeleteAlert({ postId, refreshPosts }: DeleteAlertProps) {
+export function DeleteAlert({ postId }: DeleteAlertProps) {
+  const { mutate } = useContext(PostsContext)
   const [loading, setLoading] = useState<boolean>(false)
 
   async function handleDeletePost() {
     try {
       setLoading(true)
       await api.delete(`/${postId}/`)
-      refreshPosts()
+      mutate()
     } catch (error) {
       console.error(error)
     } finally {

@@ -5,7 +5,6 @@ import { SignOut } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { useContext } from 'react'
 import { GetServerSideProps } from 'next'
-import useSWR from 'swr'
 
 import {
   ErrorMessage,
@@ -13,40 +12,16 @@ import {
   MainBox,
   MainContainer,
 } from '@/styles/pages/main'
-import { api } from '@/libs/axios'
 import { AuthContext } from '@/contexts/AuthContext'
-import { AxiosResponse } from 'axios'
 import { Post } from '@/components/Post'
 import { CreatePostForm } from '@/components/CreatePostForm'
 import { PostSkeleton } from '@/components/Post/PostSkeleton'
-
-interface MainProps {
-  count: number
-  next: any
-  previous: any
-  results: {
-    id: number
-    username: string
-    created_datetime: string
-    title: string
-    content: string
-  }[]
-}
+import { PostsContext } from '@/contexts/PostContext'
 
 export default function Main() {
   const { push } = useRouter()
   const { usernameData, logout } = useContext(AuthContext)
-  const {
-    data: postsData,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR(
-    '/',
-    (url) =>
-      api.get(url).then((response: AxiosResponse<MainProps>) => response.data),
-    { refreshInterval: 60 * 1000 },
-  )
+  const { postsData, error, isLoading } = useContext(PostsContext)
 
   if (typeof window !== 'undefined') {
     const isThereUser = localStorage.getItem(
@@ -76,10 +51,7 @@ export default function Main() {
           />
         </Header>
         <MainBox>
-          <CreatePostForm
-            accountOwnerName={usernameData}
-            refreshPosts={mutate}
-          />
+          <CreatePostForm accountOwnerName={usernameData} />
 
           {error ? (
             <ErrorMessage>
@@ -92,12 +64,7 @@ export default function Main() {
           ) : (
             postsData?.results.map((post) => {
               return (
-                <Post
-                  key={post.id}
-                  accountOwnerName={usernameData}
-                  {...post}
-                  refreshPosts={mutate}
-                />
+                <Post key={post.id} accountOwnerName={usernameData} {...post} />
               )
             })
           )}

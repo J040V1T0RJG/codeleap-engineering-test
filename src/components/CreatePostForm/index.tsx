@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { BeatLoader } from 'react-spinners'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { api } from '@/libs/axios'
 import { Button } from '../Button'
@@ -11,6 +11,7 @@ import {
   FormWrapper,
   InputWrapper,
 } from '@/styles/components/createPostForm'
+import { PostsContext } from '@/contexts/PostContext'
 
 const postDataSchema = z.object({
   title: z.string().nonempty({ message: 'Title is required' }),
@@ -21,13 +22,10 @@ type postDataType = z.infer<typeof postDataSchema>
 
 interface CreatePostFormProps {
   accountOwnerName: { username: string } | null
-  refreshPosts: () => void
 }
 
-export function CreatePostForm({
-  accountOwnerName,
-  refreshPosts,
-}: CreatePostFormProps) {
+export function CreatePostForm({ accountOwnerName }: CreatePostFormProps) {
+  const { mutate } = useContext(PostsContext)
   const { register, watch, handleSubmit, reset } = useForm<postDataType>({
     resolver: zodResolver(postDataSchema),
   })
@@ -41,7 +39,7 @@ export function CreatePostForm({
         content,
         username: accountOwnerName?.username,
       })
-      refreshPosts()
+      mutate()
     } catch (error) {
       console.error(error)
     } finally {
