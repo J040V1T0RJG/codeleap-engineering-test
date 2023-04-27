@@ -1,3 +1,12 @@
+import * as Dialog from '@radix-ui/react-dialog'
+import { z } from 'zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { BeatLoader } from 'react-spinners'
+
+import { api } from '@/libs/axios'
+import { Button } from '../Button'
 import {
   ButtonWrapper,
   CloseButton,
@@ -6,15 +15,8 @@ import {
   FormWrapper,
   InputWrapper,
   Overlay,
+  Title,
 } from '@/styles/components/EditItemModal'
-import * as Dialog from '@radix-ui/react-dialog'
-import { z } from 'zod'
-import { Button } from '../Button'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { BeatLoader } from 'react-spinners'
-import { api } from '@/libs/axios'
 
 const postDataSchema = z.object({
   title: z.string().nonempty({ message: 'Title is required' }),
@@ -30,8 +32,6 @@ export function EditItemModal({ postId }: { postId: number }) {
   })
 
   async function handleEditPost({ title, content }: postDataType) {
-    console.log('{ title, content } =>', { title, content })
-
     try {
       setLoading(true)
       await api.patch(`/${postId}/`, { title, content })
@@ -55,7 +55,7 @@ export function EditItemModal({ postId }: { postId: number }) {
       <Overlay />
       <Content>
         <FormWrapper>
-          <h2>Edit item</h2>
+          <Title>Edit item</Title>
           <Form onSubmit={handleSubmit(handleEditPost)}>
             <InputWrapper>
               <label htmlFor="title">Title</label>

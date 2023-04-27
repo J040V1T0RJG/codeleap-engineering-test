@@ -16,6 +16,12 @@ export const Content = styled(Dialog.Content, {
   transform: 'translate(-50%, -50%)',
 })
 
+export const Title = styled(Dialog.Title, {
+  fontWeight: 700,
+  fontSize: '1.375rem',
+  lineHeight: '26px',
+})
+
 export const CloseButton = styled(Dialog.Close, {})
 
 export const ButtonWrapper = styled('div', {
@@ -29,30 +35,19 @@ export const ButtonWrapper = styled('div', {
 export const FormWrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  width: '660px',
+  width: '41.25rem',
 
   background: '$white',
   border: '1px solid $gray300',
   borderRadius: '1rem',
   padding: '1.5rem',
-  marginTop: '1.5rem',
   gap: '1.5rem',
-
-  h2: {
-    fontWeight: 700,
-    fontSize: '1.375rem',
-    lineHeight: '26px',
-  },
 })
 
 export const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
   gap: '1.5rem',
-
-  // '> :last-child': {
-  //   marginLeft: 'auto',
-  // },
 })
 
 export const InputWrapper = styled('div', {

@@ -24,6 +24,7 @@ import { useContext, useState } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
 import { BeatLoader } from 'react-spinners'
 import { EditItemModal } from '@/components/EditItemModal'
+import { DeleteAlert } from '@/components/DeleteAlert'
 
 const postDataSchema = z.object({
   title: z.string().nonempty({ message: 'Title is required' }),
@@ -141,7 +142,12 @@ export default function Main({ posts }: MainProps) {
                   <h3>{post.title}</h3>
                   {usernameData?.username === post.username && (
                     <span className="postButtonBox">
-                      <Trash size={22} weight="bold" />
+                      <Dialog.Root>
+                        <Dialog.Trigger asChild>
+                          <Trash size={22} weight="bold" />
+                        </Dialog.Trigger>
+                        <DeleteAlert postId={post.id} />
+                      </Dialog.Root>
 
                       <Dialog.Root>
                         <Dialog.Trigger asChild>
