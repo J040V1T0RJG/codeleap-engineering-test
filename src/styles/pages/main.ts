@@ -9,20 +9,31 @@ export const MainContainer = styled('main', {
 
 export const Header = styled('header', {
   display: 'flex',
+  flexDirection: 'row',
   alignItems: 'center',
-  width: '50rem',
+  justifyContent: 'space-between',
+  maxWidth: '50rem',
+  width: '100%',
   height: '5rem',
 
   backgroundColor: '$blue500',
   paddingLeft: '2.375rem',
-
-  fontWeight: 700,
-  fontSize: '1.375rem',
-  lineHeight: '26px',
+  paddingRight: '2.375rem',
   color: '$white',
 
-  '@media (max-width: 50rem)': {
-    width: '100%',
+  h1: {
+    fontWeight: 700,
+    fontSize: '1.375rem',
+    lineHeight: '26px',
+  },
+
+  svg: {
+    cursor: 'pointer',
+    transition: 'all .2s ease-in-out',
+
+    '&:hover': {
+      transform: 'scale(1.2)',
+    },
   },
 })
 
@@ -123,6 +134,11 @@ export const PostTitle = styled('div', {
 
     svg: {
       cursor: 'pointer',
+      transition: 'all .2s ease-in-out',
+
+      '&:hover': {
+        transform: 'scale(1.2)',
+      },
     },
   },
 })

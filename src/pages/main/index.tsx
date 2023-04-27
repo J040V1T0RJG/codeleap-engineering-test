@@ -1,10 +1,17 @@
+'use client'
+
 import Head from 'next/head'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { NotePencil, Trash } from 'phosphor-react'
+import { NotePencil, SignOut, Trash } from 'phosphor-react'
 import { formatDistanceToNow } from 'date-fns'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useRouter } from 'next/navigation'
+import { BeatLoader } from 'react-spinners'
+import { useContext, useState } from 'react'
+import { GetServerSideProps } from 'next'
+import useSWR from 'swr'
 
 import {
   Form,
@@ -18,13 +25,11 @@ import {
   PostWrapper,
 } from '@/styles/pages/main'
 import { Button } from '@/components/Button'
-import { GetServerSideProps } from 'next'
 import { api } from '@/libs/axios'
-import { useContext, useState } from 'react'
 import { AuthContext } from '@/contexts/AuthContext'
-import { BeatLoader } from 'react-spinners'
 import { EditItemModal } from '@/components/EditItemModal'
 import { DeleteAlert } from '@/components/DeleteAlert'
+import { AxiosResponse } from 'axios'
 
 const postDataSchema = z.object({
   title: z.string().nonempty({ message: 'Title is required' }),
@@ -34,37 +39,55 @@ const postDataSchema = z.object({
 type postDataType = z.infer<typeof postDataSchema>
 
 interface MainProps {
-  posts: {
-    count: number
-    next: any
-    previous: any
-    results: {
-      id: number
-      username: string
-      created_datetime: string
-      title: string
-      content: string
-    }[]
-  }
+  count: number
+  next: any
+  previous: any
+  results: {
+    id: number
+    username: string
+    created_datetime: string
+    title: string
+    content: string
+  }[]
 }
 
-export default function Main({ posts }: MainProps) {
-  // const { isFallback, push } = useRouter()
-  const { usernameData } = useContext(AuthContext)
-  const [loading, setLoading] = useState<boolean>(false)
+export default function Main() {
+  const { push } = useRouter()
+  const {
+    data: postsData,
+    error,
+    isLoading,
+  } = useSWR('/', (url) =>
+    api.get(url).then((response: AxiosResponse<MainProps>) => response.data),
+  )
+  const { usernameData, logout } = useContext(AuthContext)
+  const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const { register, watch, handleSubmit, reset } = useForm<postDataType>({
     resolver: zodResolver(postDataSchema),
   })
 
+  console.log('useSWR data =>', postsData)
+  console.log('useSWR error =>', error)
+  console.log('useSWR isLoading =>', isLoading)
+
   async function handleCreatePost({ title, content }: postDataType) {
     try {
-      setLoading(true)
+      setIsButtonLoading(true)
       await api.post('/', { title, content, username: usernameData?.username })
     } catch (error) {
       console.error(error)
     } finally {
       reset()
-      setLoading(false)
+      setIsButtonLoading(false)
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    const isThereUser = localStorage.getItem(
+      '@codeleap-engineering-test:auth-1.0.0',
+    )
+    if (!isThereUser) {
+      push('/signup')
     }
   }
 
@@ -75,27 +98,9 @@ export default function Main({ posts }: MainProps) {
     !watch('content')
   )
 
-  // function Redirect() {
-  //   useEffect(() => {
-  //     push('/signup')
-  //   }, [])
-
-  //   return <></>
-  // }
-
-  // console.log('isFallback ==>', isFallback)
-  // if (isFallback) {
-  //   return (
-  //     <>
-  //       <p>carregando...</p>
-  //     </>
-  //   )
-  // }
-
-  // console.log('!usernameData ==>', !usernameData)
-  // if (!usernameData) {
-  //   return <Redirect />
-  // }
+  if (isLoading) {
+    console.log('carregando')
+  }
 
   return (
     <>
@@ -104,7 +109,17 @@ export default function Main({ posts }: MainProps) {
       </Head>
 
       <MainContainer>
-        <Header>CodeLeap Network</Header>
+        <Header>
+          <h1>CodeLeap Network</h1>
+          <SignOut
+            size={32}
+            weight="bold"
+            onClick={() => {
+              logout()
+              push('/signup')
+            }}
+          />
+        </Header>
         <MainBox>
           <FormWrapper>
             <h2>What`s on your mind?</h2>
@@ -128,14 +143,14 @@ export default function Main({ posts }: MainProps) {
               <Button
                 type="submit"
                 variant="primary"
-                disabled={isButtonDisabled || loading}
+                disabled={isButtonDisabled || isButtonLoading}
               >
-                {loading ? <BeatLoader color="#fff" /> : 'Create'}
+                {isButtonLoading ? <BeatLoader color="#fff" /> : 'Create'}
               </Button>
             </Form>
           </FormWrapper>
 
-          {posts.results.map((post) => {
+          {postsData?.results.map((post) => {
             return (
               <PostWrapper key={post.id}>
                 <PostTitle>
@@ -179,9 +194,7 @@ export default function Main({ posts }: MainProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const { data }: { data: MainProps } = await api.get('/')
-
   return {
-    props: { posts: data },
+    props: {},
   }
 }

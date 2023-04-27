@@ -11,6 +11,7 @@ type UsernameType = {
 type AuthContextType = {
   usernameData: UsernameType | null
   authenticateUser: ({ username }: UsernameType) => void
+  logout: () => void
 }
 
 export const AuthContext = createContext({} as AuthContextType)
@@ -34,8 +35,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUsernameData({ username })
   }
 
+  function logout() {
+    localStorage.clear()
+    setUsernameData(null)
+  }
+
   return (
-    <AuthContext.Provider value={{ authenticateUser, usernameData }}>
+    <AuthContext.Provider value={{ authenticateUser, logout, usernameData }}>
       {children}
     </AuthContext.Provider>
   )

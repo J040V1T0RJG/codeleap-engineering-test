@@ -18,10 +18,6 @@ export const FormWrapper = styled('div', {
   border: '1px solid $gray300',
   borderRadius: '1rem',
 
-  // '@media (max-width: 31.25rem)': {
-  //   width: '100%',
-  // },
-
   h2: {
     fontWeight: 700,
     fontSize: '1.375rem',
